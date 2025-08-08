@@ -158,3 +158,24 @@ printBtn.addEventListener("click", () => window.print());
 
 // Load on start ---------------------------------------
 loadAll();
+// Sample JavaScript for the "Send to BOQ" button
+document.getElementById('sendToBOQBtn').addEventListener('click', () => {
+  // 1. Collect all measurement data from your take-off app
+  // Assuming you have an array of items like this:
+  const takeoffItems = []; // You need to fill this from your app's data
+
+  // For example, if you have table rows with description and quantity, collect them like:
+  document.querySelectorAll('#your-table-id tbody tr').forEach(row => {
+    const description = row.querySelector('.description-cell').textContent.trim();
+    const quantity = row.querySelector('.quantity-cell').textContent.trim();
+    if(description && quantity) {
+      takeoffItems.push({ description, quantity });
+    }
+  });
+
+  // 2. Save to localStorage as JSON string
+  localStorage.setItem('takeoffData', JSON.stringify(takeoffItems));
+
+  // 3. Redirect to BOQ estimator app
+  window.location.href = 'https://ranoharuna.github.io/boq-estimator/';
+});
