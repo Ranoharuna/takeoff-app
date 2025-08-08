@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Take-off & BOQ Helper</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Sheets & PDF libs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <img src="logo.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+    <h1>Take-off & BOQ Helper</h1>
+  </header>
+
+  <main class="container">
+    <section class="controls">
+      <select id="category">
+        <option value="">-- Select Category --</option>
+        <optgroup label="Preliminaries">
+          <option>Site Mobilization</option>
+          <option>Site Clearance</option>
+        </optgroup>
+        <optgroup label="Substructure">
+          <option>Excavation</option>
+          <option>Foundation Concrete</option>
+        </optgroup>
+        <optgroup label="Superstructure">
+          <option>Block/Brick Walling</option>
+          <option>Reinforced Concrete Column</option>
+        </optgroup>
+        <optgroup label="Roofing">
+          <option>Roof Truss</option>
+          <option>Roof Covering</option>
+        </optgroup>
+        <optgroup label="Finishes">
+          <option>Plastering</option>
+          <option>Tiling</option>
+        </optgroup>
+        <optgroup label="Doors & Windows">
+          <option>Doors</option>
+          <option>Windows</option>
+        </optgroup>
+        <optgroup label="Services">
+          <option>Plumbing</option>
+          <option>Electrical</option>
+        </optgroup>
+        <optgroup label="External Works">
+          <option>Driveways & Paving</option>
+          <option>Landscaping</option>
+        </optgroup>
+      </select>
+
+      <input type="text" id="desc" placeholder="Item description (e.g. 150mm block wall)" />
+      <input type="number" id="len" placeholder="Length (m)" step="0.001" />
+      <input type="number" id="wid" placeholder="Width (m)" step="0.001" />
+      <input type="number" id="ht"  placeholder="Height (m)" step="0.001" />
+      <input type="number" id="qty" placeholder="Quantity (auto)" step="0.001" />
+      <select id="unitSel">
+        <option value="m">m</option>
+        <option value="m²">m²</option>
+        <option value="m³">m³</option>
+        <option value="pcs">pcs</option>
+      </select>
+      <input type="number" id="rate" placeholder="Rate (₦)" step="0.01" />
+      <button id="addBtn">➕ Add</button>
+      <button id="clearBtn" class="danger">🧼 Clear All</button>
+    </section>
+
+    <section class="table-wrap">
+      <table id="takeoffTable">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Description</th>
+            <th>L (m)</th>
+            <th>W (m)</th>
+            <th>H (m)</th>
+            <th>Qty</th>
+            <th>Unit</th>
+            <th>Rate (₦)</th>
+            <th>Amount (₦)</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="8" style="text-align:right"><strong>Total:</strong></td>
+            <td id="grandTotal">0.00</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </section>
+
+    <section class="export">
+      <button id="exportExcel">Export to Excel</button>
+      <button id="exportPDF">Export to PDF</button>
+      <button id="printBtn">Print</button>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
