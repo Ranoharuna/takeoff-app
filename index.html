@@ -21,17 +21,33 @@
     <section class="controls">
       <select id="category">
         <option value="">-- Select Category --</option>
-        <option value="Preliminaries">Preliminaries</option>
-        <option value="Substructure">Substructure</option>
-        <option value="Superstructure">Superstructure</option>
-        <option value="Roofing">Roofing</option>
-        <option value="Finishes">Finishes</option>
-        <option value="Doors & Windows">Doors & Windows</option>
-        <option value="Services">Services</option>
-        <option value="External Works">External Works</option>
+        <optgroup label="Preliminaries">
+          <option>Preliminaries</option>
+        </optgroup>
+        <optgroup label="Substructure">
+          <option>Substructure</option>
+        </optgroup>
+        <optgroup label="Superstructure">
+          <option>Superstructure</option>
+        </optgroup>
+        <optgroup label="Roofing">
+          <option>Roofing</option>
+        </optgroup>
+        <optgroup label="Finishes">
+          <option>Finishes</option>
+        </optgroup>
+        <optgroup label="Doors & Windows">
+          <option>Doors & Windows</option>
+        </optgroup>
+        <optgroup label="Services">
+          <option>Services</option>
+        </optgroup>
+        <optgroup label="External Works">
+          <option>External Works</option>
+        </optgroup>
       </select>
 
-      <!-- ✅ Fixed Description Dropdown + Manual Input -->
+      <!-- Description dropdown -->
       <select id="desc">
         <option value="">-- Select Description --</option>
       </select>
@@ -84,13 +100,14 @@
       <button id="exportPDF">Export to PDF</button>
       <button id="printBtn">Print</button>
     </section>
+
+    <section class="templates">
+      <input type="text" id="templateName" placeholder="Template name" />
+      <button onclick="saveTemplate(document.getElementById('templateName').value)">💾 Save Template</button>
+      <button onclick="loadTemplate(document.getElementById('templateName').value)">📂 Load Template</button>
+    </section>
   </main>
 
   <script src="script.js"></script>
 </body>
 </html>
-<section class="templates">
-  <input type="text" id="templateName" placeholder="Template name" />
-  <button onclick="saveTemplate(document.getElementById('templateName').value)">💾 Save Template</button>
-  <button onclick="loadTemplate(document.getElementById('templateName').value)">📂 Load Template</button>
-</section>
