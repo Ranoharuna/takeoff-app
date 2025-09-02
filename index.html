@@ -18,36 +18,20 @@
   </header>
 
   <main class="container">
+    <!-- Controls -->
     <section class="controls">
       <select id="category">
         <option value="">-- Select Category --</option>
-        <optgroup label="Preliminaries">
-          <option>Preliminaries</option>
-        </optgroup>
-        <optgroup label="Substructure">
-          <option>Substructure</option>
-        </optgroup>
-        <optgroup label="Superstructure">
-          <option>Superstructure</option>
-        </optgroup>
-        <optgroup label="Roofing">
-          <option>Roofing</option>
-        </optgroup>
-        <optgroup label="Finishes">
-          <option>Finishes</option>
-        </optgroup>
-        <optgroup label="Doors & Windows">
-          <option>Doors & Windows</option>
-        </optgroup>
-        <optgroup label="Services">
-          <option>Services</option>
-        </optgroup>
-        <optgroup label="External Works">
-          <option>External Works</option>
-        </optgroup>
+        <option value="Preliminaries">Preliminaries</option>
+        <option value="Substructure">Substructure</option>
+        <option value="Superstructure">Superstructure</option>
+        <option value="Roofing">Roofing</option>
+        <option value="Finishes">Finishes</option>
+        <option value="Doors & Windows">Doors & Windows</option>
+        <option value="Services">Services</option>
+        <option value="External Works">External Works</option>
       </select>
 
-      <!-- Description dropdown -->
       <select id="desc">
         <option value="">-- Select Description --</option>
       </select>
@@ -57,17 +41,20 @@
       <input type="number" id="wid" placeholder="Width (m)" step="0.001" />
       <input type="number" id="ht"  placeholder="Height (m)" step="0.001" />
       <input type="number" id="qty" placeholder="Quantity (auto)" step="0.001" />
+
       <select id="unitSel">
         <option value="m">m</option>
         <option value="m²">m²</option>
         <option value="m³">m³</option>
         <option value="pcs">pcs</option>
       </select>
+
       <input type="number" id="rate" placeholder="Rate (₦)" step="0.01" />
       <button id="addBtn">➕ Add</button>
       <button id="clearBtn" class="danger">🧼 Clear All</button>
     </section>
 
+    <!-- Table -->
     <section class="table-wrap">
       <table id="takeoffTable">
         <thead>
@@ -95,16 +82,23 @@
       </table>
     </section>
 
+    <!-- Export -->
     <section class="export">
       <button id="exportExcel">Export to Excel</button>
       <button id="exportPDF">Export to PDF</button>
       <button id="printBtn">Print</button>
     </section>
 
+    <!-- Templates -->
     <section class="templates">
       <input type="text" id="templateName" placeholder="Template name" />
       <button onclick="saveTemplate(document.getElementById('templateName').value)">💾 Save Template</button>
       <button onclick="loadTemplate(document.getElementById('templateName').value)">📂 Load Template</button>
+    </section>
+
+    <!-- Send to BOQ -->
+    <section class="boq">
+      <button id="sendToBOQBtn">➡️ Send to BOQ</button>
     </section>
   </main>
 
