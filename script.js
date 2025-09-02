@@ -178,4 +178,35 @@ document.getElementById('sendToBOQBtn').addEventListener('click', () => {
 
   // 3. Redirect to BOQ estimator app
   window.location.href = 'https://ranoharuna.github.io/boq-estimator/';
+});document.getElementById("category").addEventListener("change", function() {
+    const cat = this.value;
+    const descSelect = document.getElementById("desc");
+    const customDesc = document.getElementById("customDesc");
+
+    // Reset description list
+    descSelect.innerHTML = "<option value=''>-- Select Description --</option>";
+
+    if (categoryDescriptions[cat]) {
+        categoryDescriptions[cat].forEach(item => {
+            let opt = document.createElement("option");
+            opt.value = item;
+            opt.textContent = item;
+            descSelect.appendChild(opt);
+        });
+
+        // Add "Other" option
+        let otherOpt = document.createElement("option");
+        otherOpt.value = "Other";
+        otherOpt.textContent = "Other (type manually)";
+        descSelect.appendChild(otherOpt);
+    }
+
+    descSelect.addEventListener("change", function() {
+        if (this.value === "Other") {
+            customDesc.style.display = "inline-block";
+        } else {
+            customDesc.style.display = "none";
+        }
+    });
 });
+
