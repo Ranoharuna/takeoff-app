@@ -138,29 +138,61 @@ addBtn.addEventListener("click", () => {
     return;
   }
 
+  let row = { category, desc, L, W, H, Q, U, R, A };
+
+  addRowToTable(row);
+  saveData();
+});
+
+// ==========================
+// Add Row to Table
+// ==========================
+function addRowToTable(row) {
   let tr = document.createElement("tr");
   tr.innerHTML = `
-    <td>${category}</td>
-    <td>${desc}</td>
-    <td>${L}</td>
-    <td>${W}</td>
-    <td>${H}</td>
-    <td>${Q.toFixed(2)}</td>
-    <td>${U}</td>
-    <td>${R.toFixed(2)}</td>
-    <td>${A.toFixed(2)}</td>
-    <td><button class="delBtn">❌</button></td>
+    <td>${row.category}</td>
+    <td contenteditable="true">${row.desc}</td>
+    <td contenteditable="true">${row.L}</td>
+    <td contenteditable="true">${row.W}</td>
+    <td contenteditable="true">${row.H}</td>
+    <td contenteditable="true">${row.Q.toFixed(2)}</td>
+    <td contenteditable="true">${row.U}</td>
+    <td contenteditable="true">${row.R.toFixed(2)}</td>
+    <td>${row.A.toFixed(2)}</td>
+    <td>
+      <button class="delBtn">❌</button>
+    </td>
   `;
   tbody.appendChild(tr);
-
-  updateTotal();
 
   // Delete row
   tr.querySelector(".delBtn").addEventListener("click", () => {
     tr.remove();
     updateTotal();
+    saveData();
   });
-});
+
+  // Edit row (auto-update)
+  tr.querySelectorAll("td[contenteditable=true]").forEach(cell => {
+    cell.addEventListener("input", () => {
+      recalcRow(tr);
+      saveData();
+    });
+  });
+
+  updateTotal();
+}
+
+// ==========================
+// Recalculate Row
+// ==========================
+function recalcRow(tr) {
+  let Q = parseFloat(tr.children[5].textContent) || 0;
+  let R = parseFloat(tr.children[7].textContent) || 0;
+  let A = Q * R;
+  tr.children[8].textContent = A.toFixed(2);
+  updateTotal();
+}
 
 // ==========================
 // Update Total
@@ -180,6 +212,7 @@ clearBtn.addEventListener("click", () => {
   if (confirm("Clear all items?")) {
     tbody.innerHTML = "";
     updateTotal();
+    localStorage.removeItem("boqData");
   }
 });
 
@@ -187,7 +220,7 @@ clearBtn.addEventListener("click", () => {
 // Export Functions
 // ==========================
 document.getElementById("exportExcel").addEventListener("click", () => {
-  let wb = XLSX.utils.table_to_book(document.getElementById("takeoffTable"), {sheet: "BOQ"});
+  let wb = XLSX.utils.table_to_book(document.getElementById("takeoffTable"), { sheet: "BOQ" });
   XLSX.writeFile(wb, "takeoff-boq.xlsx");
 });
 
@@ -202,3 +235,64 @@ document.getElementById("exportPDF").addEventListener("click", () => {
 document.getElementById("printBtn").addEventListener("click", () => {
   window.print();
 });
+
+// ==========================
+// Save & Load with localStorage
+// ==========================
+function saveData() {
+  let rows = [];
+  document.querySelectorAll("#takeoffTable tbody tr").forEach(tr => {
+    rows.push({
+      category: tr.children[0].textContent,
+      desc: tr.children[1].textContent,
+      L: parseFloat(tr.children[2].textContent) || 0,
+      W: parseFloat(tr.children[3].textContent) || 0,
+      H: parseFloat(tr.children[4].textContent) || 0,
+      Q: parseFloat(tr.children[5].textContent) || 0,
+      U: tr.children[6].textContent,
+      R: parseFloat(tr.children[7].textContent) || 0,
+      A: parseFloat(tr.children[8].textContent) || 0
+    });
+  });
+  localStorage.setItem("boqData", JSON.stringify(rows));
+}
+
+function loadData() {
+  let data = JSON.parse(localStorage.getItem("boqData") || "[]");
+  data.forEach(row => addRowToTable(row));
+}
+
+// Load on startup
+window.onload = loadData;
+// ==========================
+// Templates Feature
+// ==========================
+function saveTemplate(name) {
+  let rows = [];
+  document.querySelectorAll("#takeoffTable tbody tr").forEach(tr => {
+    rows.push({
+      category: tr.children[0].textContent,
+      desc: tr.children[1].textContent,
+      L: parseFloat(tr.children[2].textContent) || 0,
+      W: parseFloat(tr.children[3].textContent) || 0,
+      H: parseFloat(tr.children[4].textContent) || 0,
+      Q: parseFloat(tr.children[5].textContent) || 0,
+      U: tr.children[6].textContent,
+      R: parseFloat(tr.children[7].textContent) || 0,
+      A: parseFloat(tr.children[8].textContent) || 0
+    });
+  });
+  localStorage.setItem("template_" + name, JSON.stringify(rows));
+  alert("Template saved: " + name);
+}
+
+function loadTemplate(name) {
+  let data = JSON.parse(localStorage.getItem("template_" + name) || "[]");
+  if (!data.length) {
+    alert("No template found with name: " + name);
+    return;
+  }
+  tbody.innerHTML = "";
+  data.forEach(row => addRowToTable(row));
+  saveData(); // update localStorage as current data
+}
