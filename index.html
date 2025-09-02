@@ -55,7 +55,11 @@
         </optgroup>
       </select>
 
-      <input type="text" id="desc" placeholder="Item description (e.g. 150mm block wall)" />
+      <i<select id="desc">
+  <option value="">-- Select Description --</option>
+</select>
+<input type="text" id="customDesc" placeholder="Or type custom description" style="display:none;" />
+
       <input type="number" id="len" placeholder="Length (m)" step="0.001" />
       <input type="number" id="wid" placeholder="Width (m)" step="0.001" />
       <input type="number" id="ht"  placeholder="Height (m)" step="0.001" />
