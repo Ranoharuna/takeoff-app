@@ -1,11 +1,15 @@
-// ✅ Category → Description mapping
-const categoryDescriptions = {
+// =========================
+// Take-off & BOQ Helper Script
+// =========================
+
+// Category → Description mapping
+const descriptions = {
   "Preliminaries": [
-    "Mobilization and Demobilization",
-    "Site Clearance",
-    "Temporary Works (Hoarding, Signage, Access Roads)",
-    "Project Supervision and Insurance",
-    "Health and Safety Provisions"
+    "Site mobilization",
+    "Site clearance",
+    "Temporary facilities",
+    "Health & safety provisions",
+    "Other (type manually)"
   ],
   "Substructure": [
     "Bulk excavation up to 2m depth",
@@ -16,124 +20,115 @@ const categoryDescriptions = {
     "Reinforced concrete strip footing",
     "Reinforced concrete pad footing",
     "Foundation blockwork",
-    "Damp proof membrane (500 gauge polythene)"
+    "Damp proof membrane (500 gauge polythene)",
+    "Other (type manually)"
   ],
   "Superstructure": [
-    "Reinforced concrete columns",
-    "Reinforced concrete beams",
-    "Suspended slab (150mm thick)",
-    "Blockwork walls (150mm thick)",
-    "Blockwork walls (225mm thick)",
+    "Block/brick walling",
+    "Reinforced concrete column",
+    "Reinforced concrete slab",
     "Lintels",
-    "Staircase construction"
+    "Other (type manually)"
   ],
   "Roofing": [
-    "Roof trusses (timber/steel)",
-    "Purlins",
-    "Roof covering (zinc/aluminium sheets)",
-    "Fascia board",
-    "Ridges and Eaves",
-    "Roof insulation",
-    "Rainwater gutters and downpipes"
+    "Roof truss",
+    "Roof covering (zinc/aluminium)",
+    "Insulation & ceiling",
+    "Rainwater guttering & downpipes",
+    "Other (type manually)"
   ],
   "Finishes": [
-    "Internal plastering",
-    "External rendering",
-    "Wall screeding",
-    "Painting (internal)",
-    "Painting (external)",
-    "Floor tiling",
-    "Wall tiling",
-    "Ceiling works (POP, PVC, Gypsum)"
+    "Plastering",
+    "Screeding",
+    "Painting",
+    "Tiling",
+    "Other (type manually)"
   ],
   "Doors & Windows": [
     "Wooden doors",
     "Steel security doors",
     "Aluminium windows",
-    "Wardrobes and cabinets",
-    "Sanitary fittings (WC, WHB, Shower, etc.)"
+    "Glazing",
+    "Other (type manually)"
   ],
   "Services": [
-    "Cold water supply pipework",
-    "Hot water supply pipework",
-    "Drainage and waste system",
-    "Electrical conduiting and wiring",
-    "Switches and sockets",
-    "Distribution boards",
-    "Lighting fixtures"
+    "Plumbing installation",
+    "Electrical installation",
+    "Mechanical ventilation",
+    "Other (type manually)"
   ],
   "External Works": [
-    "Paving and walkways",
-    "Driveways and parking bays",
-    "Boundary wall construction",
-    "Steel entrance gate",
-    "Landscaping and turfing",
-    "Storm water drainage"
+    "Driveways & paving",
+    "Landscaping",
+    "Perimeter fencing",
+    "Drainage works",
+    "Other (type manually)"
   ]
 };
 
-// ✅ Auto-fill Description dropdown
-document.getElementById("category").addEventListener("change", function() {
-  const cat = this.options[this.selectedIndex].parentNode.label; // Use optgroup label as category
+// Populate description dropdown when category changes
+document.getElementById("category").addEventListener("change", function () {
+  const cat = this.value;
   const descSelect = document.getElementById("desc");
-  const customDesc = document.getElementById("customDesc");
+  const manualField = document.getElementById("descManual");
 
-  // Reset description list
-  descSelect.innerHTML = "<option value=''>-- Select Description --</option>";
+  // Reset
+  descSelect.innerHTML = '<option value="">-- Select Description --</option>';
+  manualField.style.display = "none";
 
-  if (categoryDescriptions[cat]) {
-    categoryDescriptions[cat].forEach(item => {
-      let opt = document.createElement("option");
-      opt.value = item;
-      opt.textContent = item;
+  if (descriptions[cat]) {
+    descriptions[cat].forEach(d => {
+      const opt = document.createElement("option");
+      opt.value = d === "Other (type manually)" ? "manual" : d;
+      opt.textContent = d;
       descSelect.appendChild(opt);
     });
-
-    // Add "Other" option
-    let otherOpt = document.createElement("option");
-    otherOpt.value = "Other";
-    otherOpt.textContent = "Other (type manually)";
-    descSelect.appendChild(otherOpt);
   }
-
-  descSelect.addEventListener("change", function() {
-    if (this.value === "Other") {
-      customDesc.style.display = "inline-block";
-    } else {
-      customDesc.style.display = "none";
-    }
-  });
 });
 
-// ✅ Add Row function
-document.getElementById("addBtn").addEventListener("click", () => {
-  const cat = document.getElementById("category").value;
-  const descSelect = document.getElementById("desc");
-  const customDesc = document.getElementById("customDesc");
-  let desc = descSelect.value === "Other" ? customDesc.value : descSelect.value;
+// Show manual input if "Other" is selected
+document.getElementById("desc").addEventListener("change", function () {
+  const manualField = document.getElementById("descManual");
+  manualField.style.display = this.value === "manual" ? "inline-block" : "none";
+});
 
+// Helper to get final description
+function getDescription() {
+  const descSelect = document.getElementById("desc");
+  const manualField = document.getElementById("descManual");
+  return descSelect.value === "manual" ? manualField.value : descSelect.value;
+}
+
+// =========================
+// Table Logic
+// =========================
+
+const tableBody = document.querySelector("#takeoffTable tbody");
+const grandTotalEl = document.getElementById("grandTotal");
+
+document.getElementById("addBtn").addEventListener("click", function () {
+  const category = document.getElementById("category").value;
+  const desc = getDescription();
   const len = parseFloat(document.getElementById("len").value) || 0;
   const wid = parseFloat(document.getElementById("wid").value) || 0;
-  const ht  = parseFloat(document.getElementById("ht").value) || 0;
-  let qty   = parseFloat(document.getElementById("qty").value) || 0;
+  const ht = parseFloat(document.getElementById("ht").value) || 0;
+  let qty = parseFloat(document.getElementById("qty").value) || 0;
   const unit = document.getElementById("unitSel").value;
   const rate = parseFloat(document.getElementById("rate").value) || 0;
 
-  // Auto calc qty
+  // Auto-calc qty if empty
   if (!qty) {
-    if (unit === "m³") qty = len * wid * ht;
+    if (unit === "m") qty = len;
     else if (unit === "m²") qty = len * wid;
-    else if (unit === "m") qty = len;
+    else if (unit === "m³") qty = len * wid * ht;
     else qty = 1;
   }
 
-  const amt = qty * rate;
+  const amount = qty * rate;
 
-  const tbody = document.querySelector("#takeoffTable tbody");
-  const tr = document.createElement("tr");
-
-  tr.innerHTML = `
-    <td>${cat}</td>
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td>${category}</td>
     <td>${desc}</td>
     <td>${len}</td>
     <td>${wid}</td>
@@ -141,63 +136,57 @@ document.getElementById("addBtn").addEventListener("click", () => {
     <td>${qty.toFixed(2)}</td>
     <td>${unit}</td>
     <td>${rate.toFixed(2)}</td>
-    <td>${amt.toFixed(2)}</td>
-    <td><button class="delBtn">🗑</button></td>
+    <td>${amount.toFixed(2)}</td>
+    <td><button class="deleteBtn">❌</button></td>
   `;
+  tableBody.appendChild(row);
 
-  tbody.appendChild(tr);
-
-  updateTotal();
-
-  // Clear inputs
-  document.getElementById("desc").value = "";
-  document.getElementById("customDesc").value = "";
-  document.getElementById("customDesc").style.display = "none";
-  document.getElementById("len").value = "";
-  document.getElementById("wid").value = "";
-  document.getElementById("ht").value = "";
-  document.getElementById("qty").value = "";
-  document.getElementById("rate").value = "";
+  updateGrandTotal();
 });
 
-// ✅ Delete row
-document.querySelector("#takeoffTable").addEventListener("click", e => {
-  if (e.target.classList.contains("delBtn")) {
+// Delete row
+tableBody.addEventListener("click", function (e) {
+  if (e.target.classList.contains("deleteBtn")) {
     e.target.closest("tr").remove();
-    updateTotal();
+    updateGrandTotal();
   }
 });
 
-// ✅ Clear all
-document.getElementById("clearBtn").addEventListener("click", () => {
-  document.querySelector("#takeoffTable tbody").innerHTML = "";
-  updateTotal();
+// Clear all
+document.getElementById("clearBtn").addEventListener("click", function () {
+  tableBody.innerHTML = "";
+  updateGrandTotal();
 });
 
-// ✅ Update total
-function updateTotal() {
+// Update total
+function updateGrandTotal() {
   let total = 0;
-  document.querySelectorAll("#takeoffTable tbody tr").forEach(tr => {
-    total += parseFloat(tr.cells[8].textContent) || 0;
+  tableBody.querySelectorAll("tr").forEach(row => {
+    total += parseFloat(row.cells[8].textContent) || 0;
   });
-  document.getElementById("grandTotal").textContent = total.toFixed(2);
+  grandTotalEl.textContent = total.toFixed(2);
 }
 
-// ✅ Export Excel
-document.getElementById("exportExcel").addEventListener("click", () => {
-  const wb = XLSX.utils.table_to_book(document.getElementById("takeoffTable"), { sheet: "Takeoff" });
+// =========================
+// Export Functions
+// =========================
+
+// Export to Excel
+document.getElementById("exportExcel").addEventListener("click", function () {
+  const wb = XLSX.utils.table_to_book(document.getElementById("takeoffTable"));
   XLSX.writeFile(wb, "takeoff.xlsx");
 });
 
-// ✅ Export PDF
-document.getElementById("exportPDF").addEventListener("click", () => {
+// Export to PDF
+document.getElementById("exportPDF").addEventListener("click", function () {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  doc.autoTable({ html: "#takeoffTable" });
+  doc.text("Take-off & BOQ Helper", 14, 15);
+  doc.autoTable({ html: "#takeoffTable", startY: 20 });
   doc.save("takeoff.pdf");
 });
 
-// ✅ Print
-document.getElementById("printBtn").addEventListener("click", () => {
+// Print
+document.getElementById("printBtn").addEventListener("click", function () {
   window.print();
 });
