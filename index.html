@@ -21,44 +21,21 @@
     <section class="controls">
       <select id="category">
         <option value="">-- Select Category --</option>
-        <optgroup label="Preliminaries">
-          <option>Site Mobilization</option>
-          <option>Site Clearance</option>
-        </optgroup>
-        <optgroup label="Substructure">
-          <option>Excavation</option>
-          <option>Foundation Concrete</option>
-        </optgroup>
-        <optgroup label="Superstructure">
-          <option>Block/Brick Walling</option>
-          <option>Reinforced Concrete Column</option>
-        </optgroup>
-        <optgroup label="Roofing">
-          <option>Roof Truss</option>
-          <option>Roof Covering</option>
-        </optgroup>
-        <optgroup label="Finishes">
-          <option>Plastering</option>
-          <option>Tiling</option>
-        </optgroup>
-        <optgroup label="Doors & Windows">
-          <option>Doors</option>
-          <option>Windows</option>
-        </optgroup>
-        <optgroup label="Services">
-          <option>Plumbing</option>
-          <option>Electrical</option>
-        </optgroup>
-        <optgroup label="External Works">
-          <option>Driveways & Paving</option>
-          <option>Landscaping</option>
-        </optgroup>
+        <option value="Preliminaries">Preliminaries</option>
+        <option value="Substructure">Substructure</option>
+        <option value="Superstructure">Superstructure</option>
+        <option value="Roofing">Roofing</option>
+        <option value="Finishes">Finishes</option>
+        <option value="Doors & Windows">Doors & Windows</option>
+        <option value="Services">Services</option>
+        <option value="External Works">External Works</option>
       </select>
 
-      <i<select id="desc">
-  <option value="">-- Select Description --</option>
-</select>
-<input type="text" id="customDesc" placeholder="Or type custom description" style="display:none;" />
+      <!-- ✅ Fixed Description Dropdown + Manual Input -->
+      <select id="desc">
+        <option value="">-- Select Description --</option>
+      </select>
+      <input type="text" id="descManual" placeholder="Enter custom description" style="display:none;" />
 
       <input type="number" id="len" placeholder="Length (m)" step="0.001" />
       <input type="number" id="wid" placeholder="Width (m)" step="0.001" />
@@ -112,5 +89,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-<!-- Add this button somewhere in your Take-off app HTML -->
-<button id="sendToBOQBtn">Send to BOQ</button>
