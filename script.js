@@ -114,7 +114,7 @@ function calcQty() {
   if (u === "m") qty.value = l;
   if (u === "m²") qty.value = l * w;
   if (u === "m³") qty.value = l * w * h;
-  if (u === "pcs") qty.value = l; // simple pieces
+  if (u === "pcs") qty.value = l;
 }
 
 [len, wid, ht, unitSel].forEach(el => el.addEventListener("input", calcQty));
@@ -159,9 +159,7 @@ function addRowToTable(row) {
     <td contenteditable="true">${row.U}</td>
     <td contenteditable="true">${row.R.toFixed(2)}</td>
     <td>${row.A.toFixed(2)}</td>
-    <td>
-      <button class="delBtn">❌</button>
-    </td>
+    <td><button class="delBtn">❌</button></td>
   `;
   tbody.appendChild(tr);
 
@@ -262,12 +260,14 @@ function loadData() {
   data.forEach(row => addRowToTable(row));
 }
 
-// Load on startup
-window.onload = loadData;
 // ==========================
 // Templates Feature
 // ==========================
 function saveTemplate(name) {
+  if (!name) {
+    alert("Enter a template name");
+    return;
+  }
   let rows = [];
   document.querySelectorAll("#takeoffTable tbody tr").forEach(tr => {
     rows.push({
@@ -283,16 +283,4 @@ function saveTemplate(name) {
     });
   });
   localStorage.setItem("template_" + name, JSON.stringify(rows));
-  alert("Template saved: " + name);
-}
-
-function loadTemplate(name) {
-  let data = JSON.parse(localStorage.getItem("template_" + name) || "[]");
-  if (!data.length) {
-    alert("No template found with name: " + name);
-    return;
-  }
-  tbody.innerHTML = "";
-  data.forEach(row => addRowToTable(row));
-  saveData(); // update localStorage as current data
-}
+  alert("Template saved: "
